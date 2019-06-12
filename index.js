@@ -35,16 +35,16 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     this.outcomesSlotsCount = outcomesSlotsCount;
     this.id = hgUtils.getConditionId(oracle, questionId, outcomesSlotsCount);
 
-    this.split = async function(collateralAddress, indexSet) {
-      await contract.splitPosition(collateralAddress, ethers.constants.HashZero, this.id, indexSet, 100);
+    this.split = async function(collateralAddress, indexSet, value) {
+      await contract.splitPosition(collateralAddress, ethers.constants.HashZero, this.id, indexSet, value);
       return indexSet.map( (index) => {
         return new Position(this, index, collateralAddress);
       });
     };
 
-    this.fullSplit = async function(collateralAddress) {
+    this.fullSplit = async function(collateralAddress, value) {
       var indexSet = hgUtils.generateFullIndex(this.outcomesSlotsCount);
-      return this.split(collateralAddress, indexSet);
+      return this.split(collateralAddress, indexSet, value);
     };
 
     this.rawMerge = async function(collateralAddress, indexSet, value) {
