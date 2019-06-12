@@ -14,10 +14,20 @@ const Utils = {
     });
   },
 
+  getCollectionId(conditionId, indexSet) {
+    return web3.utils.soliditySha3({
+      t: 'bytes32',
+      v: conditionId
+    }, {
+      t: 'uint',
+      v: indexSet
+    })
+  },
+
   getPositionId(collectionId, collateral) {
     return web3.utils.soliditySha3({
       t: 'address',
-      v: collateral.address
+      v: collateral
     }, {
       t: 'bytes32',
       v: collectionId
