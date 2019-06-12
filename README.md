@@ -11,7 +11,13 @@ We assume that you previously deployed the Gnosis contract and a collateral toke
 
     const HG = require("gnosis-hg-js");
     let hg = new HG(<Your Prediction Market Contract address>);
-    let condition = await hg.prepareCondition('First Condition', oracle, 2);
-    await condition.split(<Your collateral token>, 100);
+    let condition = await hg.prepareCondition('Two options', oracle, 2);
+    await condition.fullSplit(<Your collateral token>, 100);
     await condition.mergeAll(<Your collateral token>, 100);
 
+### More advanced operation on positions
+    const HG = require("gnosis-hg-js");
+    let hg = new HG(<Your Prediction Market Contract address>);
+    let condition = await hg.prepareCondition('Three options', oracle, 3);
+    let positions = await condition.fullSplit(<Your collateral token>, 100);
+    let groupedCondition = await condition.merge([position[0], position[1], 10);
