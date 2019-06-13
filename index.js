@@ -15,16 +15,22 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
   };
 
 
-  function Position(condition, indexSet, collateralAddress) {
+  function Position(condition, indexSet, collateralAddress, parent) {
     this.condition = condition;
     this.indexSet = indexSet;
     this.collateralAddress = collateralAddress;
-    this.collectionId = hgUtils.getCollectionId(condition.id, this.indexSet);
+    this.parent = parent;
+    let parentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
+    this.collectionId = hgUtils.getCollectionId(parentCollectionId, condition.id, this.indexSet);
     this.id = hgUtils.getPositionId(this.collectionId, this.collateralAddress);
 
     this.balanceOf = async function(account) {
       let balance = await contract.balanceOf(account, this.id);
       return numberToBN(balance);
+    }
+
+    this.fullSplit = async function(condition, value) {
+      return condition.fullSplit(this.collateralAddress, value, this);
     }
 
   }
@@ -35,20 +41,22 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     this.outcomesSlotsCount = outcomesSlotsCount;
     this.id = hgUtils.getConditionId(oracle, questionId, outcomesSlotsCount);
 
-    this.split = async function(collateralAddress, indexSet, value) {
-      await contract.splitPosition(collateralAddress, ethers.constants.HashZero, this.id, indexSet, value);
+    this.split = async function(collateralAddress, indexSet, value, parent) {
+      let parentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
+      await contract.splitPosition(collateralAddress, parentCollectionId, this.id, indexSet, value);
+
       return indexSet.map( (index) => {
-        return new Position(this, index, collateralAddress);
+        return new Position(this, index, collateralAddress, parent);
       });
     };
 
-    this.fullSplit = async function(collateralAddress, value) {
+    this.fullSplit = async function(collateralAddress, value, parent) {
       var indexSet = hgUtils.generateFullIndex(this.outcomesSlotsCount);
-      return this.split(collateralAddress, indexSet, value);
+      return this.split(collateralAddress, indexSet, value, parent);
     };
 
-    this.rawMerge = async function(collateralAddress, indexSet, value) {
-      await contract.mergePositions(collateralAddress, ethers.constants.HashZero, this.id, indexSet, value);
+    this.rawMerge = async function(collateralAddress, indexSet, value, parent) {
+      await contract.mergePositions(collateralAddress, parent ? parent.collectionId : ethers.constants.HashZero, this.id, indexSet, value);
     }
 
     this.merge = async function(positions, value) {
@@ -65,8 +73,8 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
           freeIndexSet = freeIndexSet ^ position.indexSet;
         }
       });
-      await this.rawMerge(collateralAddress, indexSet, value);
-      return freeIndexSet == 0 ? null : new Position(this, fullIndexSet ^ freeIndexSet, collateralAddress);
+      await this.rawMerge(collateralAddress, indexSet, value, positions[0].parent);
+      return freeIndexSet == 0 ? (positions[0].parent ? positions[0].parent : null) : new Position(this, fullIndexSet ^ freeIndexSet, collateralAddress);
 
 
     }

@@ -14,14 +14,22 @@ const Utils = {
     });
   },
 
-  getCollectionId(conditionId, indexSet) {
-    return web3.utils.soliditySha3({
-      t: 'bytes32',
-      v: conditionId
-    }, {
-      t: 'uint',
-      v: indexSet
-    })
+  getCollectionId(parentCollecionId, conditionId, indexSet) {
+    return web3.utils.padLeft(
+      web3.utils.toHex(
+        web3.utils.toBN(
+          web3.utils.soliditySha3({
+            t: 'bytes32',
+            v: conditionId
+          }, {
+            t: 'uint',
+            v: indexSet
+          })
+        ).add(
+          web3.utils.toBN(parentCollecionId)
+        )
+      ), 64
+    );
   },
 
   getPositionId(collectionId, collateral) {
