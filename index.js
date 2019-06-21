@@ -8,6 +8,15 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
 
   var contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
 
+  var showGasCosts = true;
+
+  var logGasCosts = async function(tx, label) {
+    if (showGasCosts) {
+      let receipt = await provider.getTransactionReceipt(tx.hash);
+      console.log("Costs of " + label + " : " + receipt.gasUsed.toString());
+    }
+  }
+
   this.prepareCondition = async function(name, oracle, outcomeSlotsCount) {
     let bytesName = ethers.utils.formatBytes32String(name);
     await contract.prepareCondition(oracle, bytesName, outcomeSlotsCount);
@@ -43,8 +52,8 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
 
     this.split = async function(collateralAddress, indexSet, value, parent) {
       let parentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
-      await contract.splitPosition(collateralAddress, parentCollectionId, this.id, indexSet, value);
-
+      let tx = await contract.splitPosition(collateralAddress, parentCollectionId, this.id, indexSet, value);
+      await logGasCosts(tx, 'split');
       return indexSet.map( (index) => {
         return new Position(this, index, collateralAddress, parent);
       });
@@ -56,7 +65,8 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     };
 
     this.rawMerge = async function(collateralAddress, indexSet, value, parent) {
-      await contract.mergePositions(collateralAddress, parent ? parent.collectionId : ethers.constants.HashZero, this.id, indexSet, value);
+      let tx = await contract.mergePositions(collateralAddress, parent ? parent.collectionId : ethers.constants.HashZero, this.id, indexSet, value);
+      await logGasCosts(tx, 'merge');
     }
 
     this.merge = async function(positions, value) {

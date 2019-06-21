@@ -1,4 +1,5 @@
-const {soliditySha3, toHex, padLeft, keccak256, asciiToHex, toBN, fromWei} = web3.utils;
+const {soliditySha3} = web3.utils;
+const ethers = require('ethers');
 
 const Utils = {
   getConditionId : function (oracle, questionId, slotsCount) {
@@ -44,8 +45,11 @@ const Utils = {
 
   generateFullIndex : function(count) {
     var arr = [];
+    var current = ethers.utils.bigNumberify(1);
+    const factor = ethers.utils.bigNumberify(2);
     for(var i=0; i<count; i++) {
-      arr.push(1 << i);
+      arr.push(current);
+      current = current.mul(factor);
     }
     return arr;
   }
