@@ -21,45 +21,45 @@ contract('Split & merge 2 slots', function ([owner, oracle]) {
     hg = new HG(pms.address);
   });
 
-  // step("should split & merge 2 positions", async function () {
-  //   condition = await hg.prepareCondition('2 slots condition', oracle, 2);
-  //   await collateral.mint(owner, 100);
-  //   await collateral.approve(pms.address, 100);
-  //
-  //   positions = await condition.fullSplit(collateral.address, 100);
-  //
-  //   await condition.merge(positions, 100);
-  // });
-  //
-  // step("should split & merge 4 positions", async function () {
-  //   condition = await hg.prepareCondition('4 slots condition', oracle, 4);
-  //   await collateral.mint(owner, 100);
-  //   await collateral.approve(pms.address, 100);
-  //
-  //   positions = await condition.fullSplit(collateral.address, 100);
-  //
-  //   await condition.merge(positions, 100);
-  // });
-  //
-  // step("should split & merge 8 positions", async function () {
-  //   condition = await hg.prepareCondition('8 slots condition', oracle, 8);
-  //   await collateral.mint(owner, 100);
-  //   await collateral.approve(pms.address, 100);
-  //
-  //   positions = await condition.fullSplit(collateral.address, 100);
-  //
-  //   await condition.merge(positions, 100);
-  // })
-  //
-  // step("should split & merge 16 positions", async function () {
-  //   condition = await hg.prepareCondition('16 slots condition', oracle, 16);
-  //   await collateral.mint(owner, 100);
-  //   await collateral.approve(pms.address, 100);
-  //
-  //   positions = await condition.fullSplit(collateral.address, 100);
-  //
-  //   await condition.merge(positions, 100);
-  // });
+  step("should split & merge 2 positions", async function () {
+    condition = await hg.prepareCondition('2 slots condition', oracle, 2);
+    await collateral.mint(owner, 100);
+    await collateral.approve(pms.address, 100);
+
+    positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
+  });
+
+  step("should split & merge 4 positions", async function () {
+    condition = await hg.prepareCondition('4 slots condition', oracle, 4);
+    await collateral.mint(owner, 100);
+    await collateral.approve(pms.address, 100);
+
+    positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
+  });
+
+  step("should split & merge 8 positions", async function () {
+    condition = await hg.prepareCondition('8 slots condition', oracle, 8);
+    await collateral.mint(owner, 100);
+    await collateral.approve(pms.address, 100);
+
+    positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
+  })
+
+  step("should split & merge 16 positions", async function () {
+    condition = await hg.prepareCondition('16 slots condition', oracle, 16);
+    await collateral.mint(owner, 100);
+    await collateral.approve(pms.address, 100);
+
+    positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
+  });
 
   step("should split 32 positions", async function () {
     condition = await hg.prepareCondition('32 slots condition', oracle, 32);
