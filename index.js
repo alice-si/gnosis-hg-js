@@ -3,6 +3,7 @@ const numberToBN = require('number-to-bn');
 const hgUtils = require('./hg-utils.js');
 const pmsContractJson = require('@gnosis.pm/hg-contracts/build/contracts/PredictionMarketSystem');
 
+const ONE_BN = numberToBN(1);
 
 function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.currentProvider)) {
 
@@ -15,7 +16,7 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
       let receipt = await provider.getTransactionReceipt(tx.hash);
       console.log("Costs of " + label + " : " + receipt.gasUsed.toString());
     }
-  }
+  };
 
   this.prepareCondition = async function(name, oracle, outcomeSlotsCount) {
     let bytesName = ethers.utils.formatBytes32String(name);
@@ -67,26 +68,26 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     this.rawMerge = async function(collateralAddress, indexSet, value, parent) {
       let tx = await contract.mergePositions(collateralAddress, parent ? parent.collectionId : ethers.constants.HashZero, this.id, indexSet, value);
       await logGasCosts(tx, 'merge');
-    }
+    };
 
     this.merge = async function(positions, value) {
       var collateralAddress = null;
       var indexSet = [];
-      var fullIndexSet = (1 << this.outcomesSlotsCount) - 1;
-      var freeIndexSet = fullIndexSet;
+      var fullIndexSet = (ONE_BN.shln(this.outcomesSlotsCount)).sub(ONE_BN);
+      var freeIndexSet = fullIndexSet.clone();
       positions.forEach( (position) => {
         if (collateralAddress && collateralAddress != position.collateralAddress) {
           throw "All of the positions to merge must have the same collateral";
         } else {
           collateralAddress = position.collateralAddress;
-          indexSet.push(position.indexSet);
-          freeIndexSet = freeIndexSet ^ position.indexSet;
+          let indexBN = numberToBN(position.indexSet);
+          indexSet.push(indexBN);
+          freeIndexSet = freeIndexSet.xor(indexBN);
         }
       });
+      indexSet = indexSet.map(x => ethers.utils.bigNumberify(x.toString()));
       await this.rawMerge(collateralAddress, indexSet, value, positions[0].parent);
-      return freeIndexSet == 0 ? (positions[0].parent ? positions[0].parent : null) : new Position(this, fullIndexSet ^ freeIndexSet, collateralAddress);
-
-
+      return freeIndexSet.isZero() ? (positions[0].parent ? positions[0].parent : null) : new Position(this, fullIndexSet.xor(freeIndexSet), collateralAddress);
     }
 
     this.mergeAll = async function(collateralAddress, value) {

@@ -49,7 +49,7 @@ contract('Split & merge 2 slots', function ([owner, oracle]) {
     positions = await condition.fullSplit(collateral.address, 100);
 
     await condition.merge(positions, 100);
-  })
+  });
 
   step("should split & merge 16 positions", async function () {
     condition = await hg.prepareCondition('16 slots condition', oracle, 16);
@@ -67,6 +67,8 @@ contract('Split & merge 2 slots', function ([owner, oracle]) {
     await collateral.approve(pms.address, 100);
 
     positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
   });
 
   step("should split 64 positions", async function () {
@@ -75,6 +77,8 @@ contract('Split & merge 2 slots', function ([owner, oracle]) {
     await collateral.approve(pms.address, 100);
 
     positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
   });
 
   step("should split 128 positions", async function () {
@@ -83,6 +87,8 @@ contract('Split & merge 2 slots', function ([owner, oracle]) {
     await collateral.approve(pms.address, 100);
 
     positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
   });
 
   step("should split 256 positions", async function () {
@@ -91,6 +97,8 @@ contract('Split & merge 2 slots', function ([owner, oracle]) {
     await collateral.approve(pms.address, 100);
 
     positions = await condition.fullSplit(collateral.address, 100);
+
+    await condition.merge(positions, 100);
   });
 
 

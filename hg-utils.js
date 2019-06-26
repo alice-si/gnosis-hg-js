@@ -1,6 +1,8 @@
 const {soliditySha3} = web3.utils;
 const ethers = require('ethers');
 
+const full256 = web3.utils.toBN(1).shln(256).sub(web3.utils.toBN(1));
+
 const Utils = {
   getConditionId : function (oracle, questionId, slotsCount) {
     return soliditySha3({
@@ -28,7 +30,7 @@ const Utils = {
           })
         ).add(
           web3.utils.toBN(parentCollecionId)
-        )
+        ).and(full256)
       ), 64
     );
   },
