@@ -37,11 +37,11 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     this.balanceOf = async function(account) {
       let balance = await contract.balanceOf(account, this.id);
       return numberToBN(balance);
-    }
+    };
 
     this.fullSplit = async function(condition, value) {
       return condition.fullSplit(this.collateralAddress, value, this);
-    }
+    };
 
   }
 
@@ -88,12 +88,17 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
       indexSet = indexSet.map(x => ethers.utils.bigNumberify(x.toString()));
       await this.rawMerge(collateralAddress, indexSet, value, positions[0].parent);
       return freeIndexSet.isZero() ? (positions[0].parent ? positions[0].parent : null) : new Position(this, fullIndexSet.xor(freeIndexSet), collateralAddress);
-    }
+    };
 
     this.mergeAll = async function(collateralAddress, value) {
       var indexSet = hgUtils.generateFullIndex(this.outcomesSlotsCount);
       return this.rawMerge(collateralAddress, indexSet, value);
-    }
+    };
+
+    this.receiveResult = async function(result) {
+      let resultsSet = hgUtils.formatResult(result);
+      return await contract.receiveResult(this.questionId, resultsSet);
+    };
 
     //For debug purposes
     this.printAllPositions = async function(address, collateralAddress) {

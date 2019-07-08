@@ -1,4 +1,4 @@
-const {soliditySha3} = web3.utils;
+const {soliditySha3, padLeft, toHex} = web3.utils;
 const ethers = require('ethers');
 
 const full256 = web3.utils.toBN(1).shln(256).sub(web3.utils.toBN(1));
@@ -54,6 +54,14 @@ const Utils = {
       current = current.mul(factor);
     }
     return arr;
+  },
+
+  formatResult : function(result) {
+    return toHex(
+      result.reduce( (acc, item) => {
+        return acc + padLeft(item, 64).substr(2);
+      }, "0x")
+    );
   }
 };
 
