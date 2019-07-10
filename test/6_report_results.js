@@ -47,7 +47,7 @@ contract('Should partly split and merge', function ([owner, oracle]) {
     (await collateral.balanceOf(owner)).should.be.bignumber.equal('0');
     (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('100');
 
-    //Successful
+    //Unsuccessful
     await positions[1].redeem();
     (await positions[1].balanceOf(owner)).should.be.bignumber.equal('0');
     (await collateral.balanceOf(owner)).should.be.bignumber.equal('0');
@@ -58,8 +58,6 @@ contract('Should partly split and merge', function ([owner, oracle]) {
     (await positions[0].balanceOf(owner)).should.be.bignumber.equal('0');
     (await collateral.balanceOf(owner)).should.be.bignumber.equal('100');
     (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('0');
-
-
   });
 
 });
