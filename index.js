@@ -43,6 +43,10 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
       return condition.fullSplit(this.collateralAddress, value, this);
     };
 
+    this.redeem = async function() {
+      let tx = await contract.redeemPositions(this.collateralAddress, parentCollectionId, this.condition.id, [this.indexSet]);
+    }
+
   }
 
   function Condition(oracle, questionId, outcomesSlotsCount) {
