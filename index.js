@@ -9,6 +9,8 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
 
   var contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
 
+  this.contract = contract;
+
   var showGasCosts = true;
 
   var logGasCosts = async function(tx, label) {
@@ -30,9 +32,10 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     this.indexSet = indexSet;
     this.collateralAddress = collateralAddress;
     this.parent = parent;
-    let parentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
-    this.collectionId = hgUtils.getCollectionId(parentCollectionId, condition.id, this.indexSet);
+    let ownParentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
+    this.collectionId = hgUtils.getCollectionId(ownParentCollectionId, condition.id, this.indexSet);
     this.id = hgUtils.getPositionId(this.collectionId, this.collateralAddress);
+    this.parentCollectionId = ownParentCollectionId;
 
     this.balanceOf = async function(account) {
       let balance = await contract.balanceOf(account, this.id);
@@ -43,8 +46,8 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
       return condition.fullSplit(this.collateralAddress, value, this);
     };
 
-    this.redeem = async function() {
-      let tx = await contract.redeemPositions(this.collateralAddress, parentCollectionId, this.condition.id, [this.indexSet]);
+    this.redeem = async function(parentCollectionId = ownParentCollectionId, condition = this.condition, indexSet = this.indexSet) {
+      let tx = await contract.redeemPositions(this.collateralAddress, parentCollectionId, condition.id, [indexSet]);
     }
 
   }

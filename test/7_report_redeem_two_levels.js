@@ -1,6 +1,7 @@
 const TestPMS = artifacts.require("TestPMS");
 const CollateralToken = artifacts.require("CollateralToken");
 const HG = require("../index.js");
+const hgUtils = require('../hg-utils.js');
 
 require("./test-setup");
 
@@ -9,13 +10,15 @@ contract('Should partly split and merge', function ([owner, oracle]) {
   var pms;
   var collateral;
   var hg;
-  var condition;
-  var positions;
+  var conditionA;
+  var conditionB;
+  var positionA1;
+  var positionA2;
+  var positionB1;
+  var positionB2;
 
-  var condition2level;
-  var positions2level;
-
-  var positions2Split;
+  var positionA1B1;
+  var positionA1B2;
 
   step("should create Prediction Market System & Collateral contracts", async function () {
     pms = await TestPMS.new();
@@ -24,60 +27,93 @@ contract('Should partly split and merge', function ([owner, oracle]) {
 
   step("should bind contracts", async function () {
     hg = new HG(pms.address);
-    condition = await hg.prepareCondition('Third Condition', owner, 2);
+    conditionA = await hg.prepareCondition('A', owner, 2);
+    conditionB = await hg.prepareCondition('B', owner, 2);
   });
 
-  step("should split on 1st level", async function () {
-    await collateral.mint(owner, 100);
-    await collateral.approve(pms.address, 100);
+  step("should split on condition A 1st level", async function () {
+    await collateral.mint(owner, 10);
+    await collateral.approve(pms.address, 10);
 
-    positions = await condition.fullSplit(collateral.address, 100);
+    let positions = await conditionA.fullSplit(collateral.address, 10);
 
     (await collateral.balanceOf(owner)).should.be.bignumber.equal('0');
-    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('100');
-
-    positions.length.should.be.equal(2);
-
-    (await positions[0].balanceOf(owner)).should.be.bignumber.equal('100');
-    (await positions[1].balanceOf(owner)).should.be.bignumber.equal('100');
-  });
-
-  step("should split on 2nd level", async function () {
-    condition2level = await hg.prepareCondition('Second questions', oracle, 2);
-    positions2level = await positions[0].fullSplit(condition2level, 10);
-
-    positions2level.length.should.be.equal(2);
-
-    (await positions[0].balanceOf(owner)).should.be.bignumber.equal('90');
-    (await positions[1].balanceOf(owner)).should.be.bignumber.equal('100');
-
-    (await positions2level[0].balanceOf(owner)).should.be.bignumber.equal('10');
-    (await positions2level[1].balanceOf(owner)).should.be.bignumber.equal('10');
-  });
-
-  step("should report results & redeem collateral", async function () {
-    await condition.receiveResult([1,0]);
-
-    //Successful
-    await positions[0].redeem();
-    (await positions[0].balanceOf(owner)).should.be.bignumber.equal('0');
-    (await collateral.balanceOf(owner)).should.be.bignumber.equal('90');
     (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('10');
+
+    positionA1 = positions[0];
+    positionA2 = positions[1];
+
+    (await positionA1.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionA2.balanceOf(owner)).should.be.bignumber.equal('10');
   });
 
-  step("should add collateral to second condition", async function () {
-    await collateral.mint(owner, 50);
-    await collateral.approve(pms.address, 50);
+  step("should split on condition B 1st level", async function () {
+    await collateral.mint(owner, 10);
+    await collateral.approve(pms.address, 10);
 
-    positions2Split = await condition2level.fullSplit(collateral.address, 50);
+    let positions = await conditionB.fullSplit(collateral.address, 10);
 
     (await collateral.balanceOf(owner)).should.be.bignumber.equal('0');
-    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('60');
+    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('20');
 
-    positions2Split.length.should.be.equal(2);
+    positionB1 = positions[0];
+    positionB2 = positions[1];
 
-    (await positions2Split[0].balanceOf(owner)).should.be.bignumber.equal('50');
-    (await positions2Split[1].balanceOf(owner)).should.be.bignumber.equal('50');
+    (await positionB1.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionB2.balanceOf(owner)).should.be.bignumber.equal('10');
   });
+
+  step("should split on 2nd level AB", async function () {
+    let positions = await positionA1.fullSplit(conditionB, 10);
+
+    positionA1B1 = positions[0];
+    positionA1B2 = positions[1];
+
+    (await positionA1.balanceOf(owner)).should.be.bignumber.equal('0');
+    (await positionA1B1.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionA1B2.balanceOf(owner)).should.be.bignumber.equal('10');
+  });
+
+  step("should report results", async function () {
+    await conditionA.receiveResult([1,0]);
+  });
+
+  step("should redeem A1B1", async function () {
+    (await positionA1B1.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionA1B2.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionB1.balanceOf(owner)).should.be.bignumber.equal('10');
+
+    await positionA1B1.redeem(positionB1.collectionId, conditionA);
+
+    (await positionA1B1.balanceOf(owner)).should.be.bignumber.equal('0');
+    (await positionA1B2.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionB1.balanceOf(owner)).should.be.bignumber.equal('20');
+    (await positionB2.balanceOf(owner)).should.be.bignumber.equal('10');
+
+  });
+
+  step("should redeem A1B2", async function () {
+    (await positionA1B1.balanceOf(owner)).should.be.bignumber.equal('0');
+    (await positionA1B2.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionB1.balanceOf(owner)).should.be.bignumber.equal('20');
+    (await positionB2.balanceOf(owner)).should.be.bignumber.equal('10');
+
+    await positionA1B2.redeem(positionB2.collectionId, conditionA, 1);
+
+    (await positionA1B1.balanceOf(owner)).should.be.bignumber.equal('0');
+    (await positionA1B2.balanceOf(owner)).should.be.bignumber.equal('0');
+    (await positionB1.balanceOf(owner)).should.be.bignumber.equal('20');
+    (await positionB2.balanceOf(owner)).should.be.bignumber.equal('20');
+
+  });
+
+
+  //col(A1, B, 1) = A1 + keccak(B, 1) = keccak(A, 1) + keccak(B, 1)
+  //col(B1, A, 1) = B1 + keccak(A, 1) = keccak(B, 1) + keccak(A, 1)
+
+  //col(A1, B, 2) = A1 + keccak(B, 2) = keccak(A, 1) + keccak(B, 2)
+  //col(B2, A, 1) = B2 + keccak(A, 1) = keccak(B, 2) + keccak(A, 1)
+
+  //col(A1B1, C, 1) = A1B1 + keccak(C, 1)
 
 });
