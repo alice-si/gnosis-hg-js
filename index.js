@@ -1,6 +1,7 @@
 const ethers = require('ethers');
 const numberToBN = require('number-to-bn');
 const hgUtils = require('./hg-utils.js');
+const hgRegistry = require('./hg-registry.js');
 const pmsContractJson = require('@gnosis.pm/hg-contracts/build/contracts/PredictionMarketSystem');
 
 const ONE_BN = numberToBN(1);
@@ -26,6 +27,11 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     return new Condition(oracle, bytesName, outcomeSlotsCount);
   };
 
+  // For State persistence
+  this.createRegistry = async function() {
+    let registry = new hgRegistry(this.contract);
+    return registry;
+  }
 
   function Position(condition, indexSet, collateralAddress, parent) {
     this.condition = condition;
@@ -116,7 +122,6 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
       }
     }
   }
-
 };
 
 

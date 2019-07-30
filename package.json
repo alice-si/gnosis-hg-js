@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@gnosis.pm/hg-contracts": "^0.2.3",
-    "ethers": "^4.0.27",
+    "ethers": "^4.0.33",
     "number-to-bn": "^1.7.0",
     "web3": "^1.0.0-beta.34"
   },
