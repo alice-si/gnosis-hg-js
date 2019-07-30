@@ -1,5 +1,6 @@
 const TestPMS = artifacts.require("TestPMS");
 const CollateralToken = artifacts.require("CollateralToken");
+const Utils = require('../hg-utils.js');
 const HG = require('../index.js');
 
 require('./test-setup.js');
@@ -24,9 +25,19 @@ contract('Should persist state', function([owner, oracle]) {
 
   step("should create Condition, send condition to hgRegistry to track and save state", async function() {
     condition = await hg.prepareCondition('Test State', oracle, 2);
-    conditions = await hgRegistry.getEvents(condition);
-    conditions.length.should.be.equal(1);
-  })
+    await hgRegistry.getConditions();
+    hgRegistry.conditions.length.should.be.equal(1);
+  });
+
+  step("should create 3 Condition, send condition to hgRegistry to track and save state", async function() {
+    await hg.prepareCondition('Test State 1', oracle, 2);
+    await hg.prepareCondition('Test State 2', oracle, 2);
+    await hg.prepareCondition('Test State 3', oracle, 2);
+    await hgRegistry.getConditions();
+    hgRegistry.conditions.length.should.be.equal(3);
+
+    // (await conditions[0].conditionId).should.be.equal(Utils.getConditionId(oracle, 'Test State 1', 2));
+  });
 })
 
 

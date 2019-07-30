@@ -29,9 +29,10 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
 
   // For State persistence
   this.createRegistry = async function() {
-    let registry = new hgRegistry(this.contract);
+    let registry = new hgRegistry(this.contract, provider);
     return registry;
   }
+
 
   function Position(condition, indexSet, collateralAddress, parent) {
     this.condition = condition;

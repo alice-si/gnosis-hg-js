@@ -1,26 +1,34 @@
 const HG = require('./index.js');
-const hgUtils = require('./hg-utils.js');
-const numberToBN = require('number-to-bn');
 
-function HGRegistry(contract) {
-  this.getEvents = async function(condition) {
-    let conditions = [];
-    let conditionId = condition.id;
-    let oracle = condition.oracle;
+function HGRegistry(contract, provider) {
+  this.contract = contract;
+  this.provider = provider;
+  this.conditions = [];
 
-    let slotCount = await contract.getOutcomeSlotCount(conditionId);
-
+  this.getConditions = function() {
     // Create a filter for 'ConditionPreparation' event
-    let filter = contract.filters.ConditionPreparation(conditionId);
+    if (web3.version.network != 42) {
+      this.provider.resetEventsBlock(0);
+      let condition = listenForConditions(this.contract);
+      this.conditions.push(condition);
+    }
 
-    // Listen for our filtered results
-    await contract.on(filter, (conditionId) => {
-      console.log("found one");
-      conditions.push(condition);
-    });
-    return conditions;
+    console.log(this.conditions);
   }
+}
 
+function listenForConditions(contract) {
+  let filter = contract.filters.ConditionPreparation();
+  contract.on(filter, (id, oracle, questionId, slots) => {
+    console.log("id: ");
+    console.log(id);
+    return ({
+      conditionId: id,
+      oracle: oracle,
+      questionId: questionId,
+      outcomesSlotCount: slots
+    })
+  })
 }
 
 module.exports = HGRegistry;
