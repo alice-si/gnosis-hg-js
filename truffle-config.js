@@ -1,3 +1,6 @@
+var HDWalletProvider = require("truffle-hdwallet-provider");
+var mnemonic = "spoon uncle park ritual alarm journey matter water apart warrior weird soap";
+
 module.exports = {
   networks: {
     development: {
@@ -5,7 +8,14 @@ module.exports = {
       port: 8545,
       network_id: '*', // Match any network id
     },
-    gas: 20000
+    rinkeby: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/4151b2d00d774670adf72249002fae04");
+      },
+      network_id: 4,
+      gas: 4500000,
+      gasPrice: 10000000000,
+    },
   },
   compilers: {
     solc: {
