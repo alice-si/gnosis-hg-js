@@ -1,3 +1,4 @@
+const web3Gnosis = require('web3');
 const ethers = require('ethers');
 const numberToBN = require('number-to-bn');
 const hgUtils = require('./hg-utils.js');
@@ -6,7 +7,10 @@ const pmsContractJson = require('@gnosis.pm/hg-contracts/build/contracts/Predict
 
 const ONE_BN = numberToBN(1);
 
-function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.currentProvider)) {
+function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3Gnosis.currentProvider)) {
+  if(!contractAddress) {
+    contractAddress = initContract();
+  }
 
   var contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
 
@@ -33,6 +37,13 @@ function HG(contractAddress, provider = new ethers.providers.Web3Provider(web3.c
     return registry;
   }
 
+  async function initContract () {
+    let factory = new ethers.ContractFactory(pmsContractJson.abi, pmsContractJson.bytecode, provider.getSigner());
+    let contract = await factory.deploy();
+    await contract.deployed().then(()=> {
+      return contract.address;
+    });
+  }
 
   function Position(condition, indexSet, collateralAddress, parent) {
     this.condition = condition;

@@ -1,7 +1,8 @@
-const {soliditySha3, padLeft, toHex} = web3.utils;
+const web3Gnosis = require('web3');
+const { soliditySha3, padLeft, toHex } = web3Gnosis.utils;
 const ethers = require('ethers');
 
-const full256 = web3.utils.toBN(1).shln(256).sub(web3.utils.toBN(1));
+const full256 = web3Gnosis.utils.toBN(1).shln(256).sub(web3Gnosis.utils.toBN(1));
 
 const Utils = {
   getConditionId : function (oracle, questionId, slotsCount) {
@@ -18,10 +19,10 @@ const Utils = {
   },
 
   getCollectionId(parentCollecionId, conditionId, indexSet) {
-    return web3.utils.padLeft(
-      web3.utils.toHex(
-        web3.utils.toBN(
-          web3.utils.soliditySha3({
+    return web3Gnosis.utils.padLeft(
+      web3Gnosis.utils.toHex(
+        web3Gnosis.utils.toBN(
+          web3Gnosis.utils.soliditySha3({
             t: 'bytes32',
             v: conditionId
           }, {
@@ -29,14 +30,14 @@ const Utils = {
             v: indexSet
           })
         ).add(
-          web3.utils.toBN(parentCollecionId)
+          web3Gnosis.utils.toBN(parentCollecionId)
         ).and(full256)
       ), 64
     );
   },
 
   getPositionId(collectionId, collateral) {
-    return web3.utils.soliditySha3({
+    return web3Gnosis.utils.soliditySha3({
       t: 'address',
       v: collateral
     }, {
@@ -62,7 +63,7 @@ const Utils = {
         return acc + padLeft(item, 64).substr(2);
       }, "0x")
     );
-  }
+  },
 };
 
 module.exports = Utils;

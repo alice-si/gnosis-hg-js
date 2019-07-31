@@ -16,7 +16,7 @@ contract('Should fully split and merge', function ([owner, oracle]) {
       pms = await TestPMS.new();
       collateral = await CollateralToken.new();
     });
-
+    
     step("should bind contracts", async function () {
       hg = new HG(pms.address);
       condition = await hg.prepareCondition('Second Condition', oracle, 3);
