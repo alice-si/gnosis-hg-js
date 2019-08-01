@@ -7,7 +7,7 @@ const pmsContractJson = require('@gnosis.pm/hg-contracts/build/contracts/Predict
 
 const ONE_BN = numberToBN(1);
 
-function HG(contractAddress, provider = new ethers.providers.Web3Provider(window.web3Gnosis.currentProvider)) {
+function HG(contractAddress, provider = new ethers.providers.Web3Provider(window.web3.currentProvider)) {
   if(!contractAddress) {
     contractAddress = initContract();
   }
