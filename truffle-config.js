@@ -13,7 +13,7 @@ module.exports = {
         return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/4151b2d00d774670adf72249002fae04");
       },
       network_id: 4,
-      gas: 4500000,
+      gas: 6000000,
       gasPrice: 10000000000,
     },
   },
