@@ -29,11 +29,10 @@ contract('Should persist state', function([owner, oracle]) {
     hgRegistry.conditions.length.should.be.equal(1);
   });
 
-  step("should create multiple Conditions, send them to registry to track and save state", async function() {
-    await hg.prepareCondition('Test State 1', oracle, 2);
+  step("should create 3 Conditions, send them to registry to track and save state", async function() {
+    await hg.prepareCondition('Test State1', oracle, 2);
     await hg.prepareCondition('Test State 2', oracle, 2);
     await hgRegistry.getConditions();
-    // including the condition prepared in prev test
     hgRegistry.conditions.length.should.be.equal(3);
   })
 });

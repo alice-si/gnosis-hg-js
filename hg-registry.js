@@ -6,16 +6,12 @@ function HGRegistry(contract, provider) {
   this.conditions = [];
 
   this.getConditions = async function() {
-    let cons = [];
     provider.resetEventsBlock(0);
     let filter = contract.filters.ConditionPreparation();
     return new Promise(function(resolve, reject) {
-      provider.on(filter, (result) => {
-        cons.push(result);
-        return resolve(cons);
+      provider.getLogs(filter).then((result) => {
+        this.conditions  = result;
       });
-    }).then((cons) => {
-      this.conditions = cons;
     });
   }
 }
