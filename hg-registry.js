@@ -1,4 +1,5 @@
 const HG = require('./index.js');
+const ethers = require('ethers');
 
 function HGRegistry(contract, provider) {
   this.contract = contract;
@@ -6,11 +7,26 @@ function HGRegistry(contract, provider) {
   this.conditions = [];
 
   this.getConditions = async function() {
-    provider.resetEventsBlock(0);
+    let parent = this;
+    let eventAbi = this.contract.interface.abi.find(function(element) {
+      return (element.name === 'ConditionPreparation' && element.type === 'event');
+    });
+    let iface = new ethers.utils.Interface([eventAbi]);
     let filter = contract.filters.ConditionPreparation();
     filter.fromBlock = 0;
-    provider.getLogs(filter).then((result) => {
-      this.conditions  = result;
+    return new Promise(function(resolve, reject) {
+      provider.getLogs(filter).then((result) => {
+        if(result) {
+          result.forEach((event, i) => {
+            result[i] = iface.parseLog(event);
+          });
+          parent.conditions = result;
+          resolve();
+        }
+        else {
+          reject('ERROR: Conditions returned undefined!');
+        }
+      });
     });
   }
 }
