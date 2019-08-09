@@ -18,7 +18,7 @@ const Utils = {
     });
   },
 
-  getCollectionId(parentCollecionId, conditionId, indexSet) {
+  getCollectionId(parentCollectionId, conditionId, indexSet) {
     return web3Gnosis.utils.padLeft(
       web3Gnosis.utils.toHex(
         web3Gnosis.utils.toBN(
@@ -30,7 +30,7 @@ const Utils = {
             v: indexSet
           })
         ).add(
-          web3Gnosis.utils.toBN(parentCollecionId)
+          web3Gnosis.utils.toBN(parentCollectionId)
         ).and(full256)
       ), 64
     );

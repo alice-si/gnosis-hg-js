@@ -15,18 +15,6 @@ function HG(contractAddress) {
   var contract;
   var showGasCosts = true;
 
-  // Initialise vars
-  if (typeof injectedWeb3 !== "undefined") {
-    provider = new ethers.providers.Web3Provider(injectedWeb3.currentProvider);
-    signer = provider.getSigner();
-  } else {
-    console.log("No web3 provider available - consider installing MetaMask!");
-    // We must later change to the real deployment
-    provider = new ethers.providers.HttpProvider('https://rinkeby.infura.io/v3/4151b2d00d774670adf72249002fae04');
-  }
-  contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
-  this.contract = contract;
-  registry = new hgRegistry(this.contract, this.getProvider());
 
   // Getters
 
@@ -39,10 +27,23 @@ function HG(contractAddress) {
     }
     return registry;
   }
-  this.getConditions = function()
- {
+
+  // Initialise vars
+  if (typeof injectedWeb3 !== "undefined") {
+    provider = new ethers.providers.Web3Provider(injectedWeb3.currentProvider);
+    signer = provider.getSigner();
+  } else {
+    console.log("No web3 provider available - consider installing MetaMask!");
+    // We must later change to the real deployment
+    provider = new ethers.providers.HttpProvider('https://rinkeby.infura.io/v3/4151b2d00d774670adf72249002fae04');
+  }
+
+  contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
+  this.contract = contract;
+  registry = new hgRegistry(this.contract, this.getProvider());
+  this.getConditions = function() {
    this.getRegistry().getConditions();
- }
+  }
   if(!contractAddress) {
     contractAddress = initContract();
   }
@@ -59,6 +60,10 @@ function HG(contractAddress) {
     await contract.prepareCondition(oracle, bytesName, outcomeSlotsCount);
     return new Condition(oracle, bytesName, outcomeSlotsCount);
   };
+
+  this.createCondition = function(oracle, questionId, outcomesSlotsCount) {
+    return new Condition(oracle, questionId, outcomesSlotsCount);
+  }
 
   async function initContract () {
     let factory = new ethers.ContractFactory(pmsContractJson.abi, pmsContractJson.bytecode, provider.getSigner());
