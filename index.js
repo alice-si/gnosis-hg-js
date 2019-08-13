@@ -44,6 +44,9 @@ function HG(contractAddress) {
   this.getConditions = function() {
    this.getRegistry().getConditions();
   }
+  this.getPositions = function() {
+    this.getRegistry().getPositions();
+  }
   if(!contractAddress) {
     contractAddress = initContract();
   }
@@ -65,6 +68,10 @@ function HG(contractAddress) {
     return new Condition(oracle, questionId, outcomesSlotsCount);
   }
 
+  this.createPosition = function(condition, indexSet, collateralAddress, parent) {
+    return new Position(condition, indexSet, collateralAddress, parent);
+  }
+
   async function initContract () {
     let factory = new ethers.ContractFactory(pmsContractJson.abi, pmsContractJson.bytecode, provider.getSigner());
     let contract = await factory.deploy();
@@ -78,8 +85,8 @@ function HG(contractAddress) {
     this.indexSet = indexSet;
     this.collateralAddress = collateralAddress;
     this.parent = parent;
-    let ownParentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
-    this.collectionId = hgUtils.getCollectionId(ownParentCollectionId, condition.id, this.indexSet);
+    let ownParentCollectionId = parent ? parent : ethers.constants.HashZero;
+    this.collectionId = hgUtils.getCollectionId(ownParentCollectionId, condition.id, this.indexSet._hex);
     this.id = hgUtils.getPositionId(this.collectionId, this.collateralAddress);
     this.parentCollectionId = ownParentCollectionId;
 
