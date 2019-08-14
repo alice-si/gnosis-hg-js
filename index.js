@@ -8,15 +8,18 @@ const pmsContractJson = require('@gnosis.pm/hg-contracts/build/contracts/Predict
 const ONE_BN = numberToBN(1);
 
 function HG(contractAddress) {
-  const injectedWeb3 = window.web3;
-  let provider;
-  let signer;
+  var provider;
   var registry;
   var contract;
   var showGasCosts = true;
 
+  if (typeof window === 'undefined') {
+    provider = new ethers.providers.Web3Provider(web3.currentProvider);
+  } else {
+    provider = new ethers.providers.Web3Provider(window.web3.currentProvider);
+  }
+  let signer = provider.getSigner();
 
-  // Getters
 
   this.getProvider = function() {
     return provider;
@@ -28,15 +31,6 @@ function HG(contractAddress) {
     return registry;
   }
 
-  // Initialise vars
-  if (typeof injectedWeb3 !== "undefined") {
-    provider = new ethers.providers.Web3Provider(injectedWeb3.currentProvider);
-    signer = provider.getSigner();
-  } else {
-    console.log("No web3 provider available - consider installing MetaMask!");
-    // We must later change to the real deployment
-    provider = new ethers.providers.HttpProvider('https://rinkeby.infura.io/v3/4151b2d00d774670adf72249002fae04');
-  }
 
   contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
   this.contract = contract;
@@ -85,7 +79,7 @@ function HG(contractAddress) {
     this.indexSet = indexSet;
     this.collateralAddress = collateralAddress;
     this.parent = parent;
-    let ownParentCollectionId = parent ? parent : ethers.constants.HashZero;
+    let ownParentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
     this.collectionId = hgUtils.getCollectionId(ownParentCollectionId, condition.id, this.indexSet._hex);
     this.id = hgUtils.getPositionId(this.collectionId, this.collateralAddress);
     this.parentCollectionId = ownParentCollectionId;
