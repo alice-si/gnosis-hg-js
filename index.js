@@ -79,11 +79,6 @@ function HG(contractAddress) {
     this.collateralAddress = collateralAddress;
     this.parent = parent;
     let ownParentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
-    //
-    // console.log("OWN PARENT: " + ownParentCollectionId);
-    // console.log("condition.id: " + condition.id);
-    // console.log("index set: " + this.indexSet);
-    // console.log("hex: " + this.indexSet._hex);
 
     this.collectionId = hgUtils.getCollectionId(ownParentCollectionId, condition.id, this.indexSet);
     this.id = hgUtils.getPositionId(this.collectionId, this.collateralAddress);
