@@ -23,27 +23,32 @@ function HG(contractAddress) {
 
   this.getProvider = function() {
     return provider;
-  }
+  };
+
+  async function initContract () {
+    let factory = new ethers.ContractFactory(pmsContractJson.abi, pmsContractJson.bytecode, provider.getSigner());
+    contract = await factory.deploy();
+    this.contract = contract;
+  };
+
+  contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
+  this.contract = contract;
+
+
   this.getRegistry = function() {
     if (!registry) {
-      return new hgRegistry(this, this.getProvider());
+      registry = new hgRegistry(this.contract, this.getProvider());
     }
     return registry;
   }
 
-
-  contract = new ethers.Contract(contractAddress, pmsContractJson.abi, provider.getSigner());
-  this.contract = contract;
-  registry = new hgRegistry(this.contract, this.getProvider());
   this.getConditions = function() {
    this.getRegistry().getConditions();
-  }
+  };
+
   this.getPositions = function() {
     this.getRegistry().getPositions();
-  }
-  if(!contractAddress) {
-    contractAddress = initContract();
-  }
+  };
 
   var logGasCosts = async function(tx, label) {
     if (showGasCosts) {
@@ -66,13 +71,7 @@ function HG(contractAddress) {
     return new Position(condition, indexSet, collateralAddress, parent);
   }
 
-  async function initContract () {
-    let factory = new ethers.ContractFactory(pmsContractJson.abi, pmsContractJson.bytecode, provider.getSigner());
-    let contract = await factory.deploy();
-    await contract.deployed().then(()=> {
-      return contract.address;
-    });
-  }
+
 
   function Position(condition, indexSet, collateralAddress, parent) {
     this.condition = condition;
@@ -80,7 +79,13 @@ function HG(contractAddress) {
     this.collateralAddress = collateralAddress;
     this.parent = parent;
     let ownParentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
-    this.collectionId = hgUtils.getCollectionId(ownParentCollectionId, condition.id, this.indexSet._hex);
+    //
+    // console.log("OWN PARENT: " + ownParentCollectionId);
+    // console.log("condition.id: " + condition.id);
+    // console.log("index set: " + this.indexSet);
+    // console.log("hex: " + this.indexSet._hex);
+
+    this.collectionId = hgUtils.getCollectionId(ownParentCollectionId, condition.id, this.indexSet);
     this.id = hgUtils.getPositionId(this.collectionId, this.collateralAddress);
     this.parentCollectionId = ownParentCollectionId;
 

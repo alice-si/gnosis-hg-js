@@ -83,9 +83,9 @@ contract('Should partly split and merge', function ([owner, oracle]) {
   });
 
   step("should redeem A1B1C1", async function () {
-    await positionA1B1C1.redeem(positionB1C1.collectionId, conditionA, 1);
+    await positionA1B1C1.redeem(positionA1C1.collectionId, conditionB, 1);
 
     (await positionA1B1C1.balanceOf(owner)).should.be.bignumber.equal('0');
-    (await positionB1C1.balanceOf(owner)).should.be.bignumber.equal('20');
+    (await positionA1C1.balanceOf(owner)).should.be.bignumber.equal('20');
   });
 });

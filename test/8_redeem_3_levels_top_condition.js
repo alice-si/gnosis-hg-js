@@ -69,7 +69,7 @@ contract('Should partly split and merge', function ([owner, oracle]) {
     let positions = await positionB1.fullSplit(conditionC, 10);
 
     positionB1C1 = positions[0];
-    positionB1C2 = positions[0];
+    positionB1C2 = positions[1];
 
     (await positionB1C1.balanceOf(owner)).should.be.bignumber.equal('10');
     (await positionB1C2.balanceOf(owner)).should.be.bignumber.equal('10');
@@ -98,6 +98,9 @@ contract('Should partly split and merge', function ([owner, oracle]) {
   });
 
   step("should redeem A1B1C1", async function () {
+    (await positionA1B1C1.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionB1C1.balanceOf(owner)).should.be.bignumber.equal('10');
+
     await positionA1B1C1.redeem(positionB1C1.collectionId, conditionA, 1);
 
     (await positionA1B1C1.balanceOf(owner)).should.be.bignumber.equal('0');
@@ -105,6 +108,9 @@ contract('Should partly split and merge', function ([owner, oracle]) {
   });
 
   step("should redeem A1B1C2", async function () {
+    (await positionA1B1C2.balanceOf(owner)).should.be.bignumber.equal('10');
+    (await positionB1C2.balanceOf(owner)).should.be.bignumber.equal('10');
+
     await positionA1B1C2.redeem(positionB1C2.collectionId, conditionA, 1);
 
     (await positionA1B1C2.balanceOf(owner)).should.be.bignumber.equal('0');
