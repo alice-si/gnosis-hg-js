@@ -22,9 +22,22 @@ We assume that you previously deployed the Gnosis contract and a collateral toke
     let positions = await condition.fullSplit(<Your collateral token>, 100);
     let groupedCondition = await condition.merge([position[0], position[1], 10);
 
-### Available functions
+### HG wrapper
 
 | Function | Description |
 | --- | --- |
-| new HG(_contract_address_) | Creates a binding wrapper for a deployed prediction market system |
-| prepareCondition(_id_, _oracle_address_, _number_of_outcome_slots | Creates a new condition |
+| _new HG(contract_address)_ | Creates a binding wrapper for a deployed prediction market system |
+| _prepareCondition(id, oracle_address, number_of_outcome_slots)_ | Creates a new condition |
+
+### Condition
+
+| Function | Description |
+| --- | --- |
+| _split(collateralAddress, indexSet, amount)_ | Creates a first split on the given condition locking the _amount_ of collateral tokens |
+| _fullSplit(collateralAddress, amount)_ | Creates a new condition |
+| _merge(positions, amount)_ | Merges the given _positions_ up to the _amount_ of collateral|
+| _mergeAll(collateralAddress, amount)_ | Merges all of the _positions_ created on a given condition up to the _amount_ of collateral |
+
+
+### Position
+

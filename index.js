@@ -89,8 +89,12 @@ function HG(contractAddress) {
       return numberToBN(balance);
     };
 
-    this.fullSplit = async function(condition, value) {
-      return condition.fullSplit(this.collateralAddress, value, this);
+    this.fullSplit = async function(condition, amount) {
+      return condition.fullSplit(this.collateralAddress, amount, this);
+    };
+
+    this.split = async function(condition, amount, indexSet) {
+      return condition.split(this.collateralAddress, indexSet, amount, this);
     };
 
     this.redeem = async function(parentCollectionId = ownParentCollectionId, condition = this.condition, indexSet = this.indexSet) {
@@ -105,26 +109,26 @@ function HG(contractAddress) {
     this.outcomesSlotsCount = outcomesSlotsCount;
     this.id = hgUtils.getConditionId(oracle, questionId, outcomesSlotsCount);
 
-    this.split = async function(collateralAddress, indexSet, value, parent) {
+    this.split = async function(collateralAddress, indexSet, amount, parent) {
       let parentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
-      let tx = await contract.splitPosition(collateralAddress, parentCollectionId, this.id, indexSet, value);
+      let tx = await contract.splitPosition(collateralAddress, parentCollectionId, this.id, indexSet, amount);
       await logGasCosts(tx, 'split');
       return indexSet.map( (index) => {
         return new Position(this, index, collateralAddress, parent);
       });
     };
 
-    this.fullSplit = async function(collateralAddress, value, parent) {
+    this.fullSplit = async function(collateralAddress, amount, parent) {
       var indexSet = hgUtils.generateFullIndex(this.outcomesSlotsCount);
-      return this.split(collateralAddress, indexSet, value, parent);
+      return this.split(collateralAddress, indexSet, amount, parent);
     };
 
-    this.rawMerge = async function(collateralAddress, indexSet, value, parent) {
-      let tx = await contract.mergePositions(collateralAddress, parent ? parent.collectionId : ethers.constants.HashZero, this.id, indexSet, value);
+    this.rawMerge = async function(collateralAddress, indexSet, amount, parent) {
+      let tx = await contract.mergePositions(collateralAddress, parent ? parent.collectionId : ethers.constants.HashZero, this.id, indexSet, amount);
       await logGasCosts(tx, 'merge');
     };
 
-    this.merge = async function(positions, value) {
+    this.merge = async function(positions, amount) {
       var collateralAddress = null;
       var indexSet = [];
       var fullIndexSet = (ONE_BN.shln(this.outcomesSlotsCount)).sub(ONE_BN);
@@ -140,13 +144,13 @@ function HG(contractAddress) {
         }
       });
       indexSet = indexSet.map(x => ethers.utils.bigNumberify(x.toString()));
-      await this.rawMerge(collateralAddress, indexSet, value, positions[0].parent);
+      await this.rawMerge(collateralAddress, indexSet, amount, positions[0].parent);
       return freeIndexSet.isZero() ? (positions[0].parent ? positions[0].parent : null) : new Position(this, fullIndexSet.xor(freeIndexSet), collateralAddress);
     };
 
-    this.mergeAll = async function(collateralAddress, value) {
+    this.mergeAll = async function(collateralAddress, amount) {
       var indexSet = hgUtils.generateFullIndex(this.outcomesSlotsCount);
-      return this.rawMerge(collateralAddress, indexSet, value);
+      return this.rawMerge(collateralAddress, indexSet, amount);
     };
 
     this.receiveResult = async function(result) {
