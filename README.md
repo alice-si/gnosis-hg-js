@@ -22,22 +22,30 @@ We assume that you previously deployed the Gnosis contract and a collateral toke
     let positions = await condition.fullSplit(<Your collateral token>, 100);
     let groupedCondition = await condition.merge([position[0], position[1], 10);
 
-### HG wrapper
+### Available functions
+
+#### HG wrapper
 
 | Function | Description |
 | --- | --- |
 | _new HG(contract_address)_ | Creates a binding wrapper for a deployed prediction market system |
 | _prepareCondition(id, oracle_address, number_of_outcome_slots)_ | Creates a new condition |
 
-### Condition
+#### Condition
 
 | Function | Description |
 | --- | --- |
-| _split(collateralAddress, indexSet, amount)_ | Creates a first split on the given condition locking the _amount_ of collateral tokens |
-| _fullSplit(collateralAddress, amount)_ | Creates a new condition |
+| _fullSplit(collateralAddress, amount)_ | Creates a first split on the given condition locking the _amount_ of collateral tokens _Before the first split the calling account needs to created an allowance for the desired amount of collateral (token.allow(prediction_markets_address, amount) |
 | _merge(positions, amount)_ | Merges the given _positions_ up to the _amount_ of collateral|
 | _mergeAll(collateralAddress, amount)_ | Merges all of the _positions_ created on a given condition up to the _amount_ of collateral |
+| _receiveResult(result)_ | Records the array of results per every outcome slot |
 
 
-### Position
+#### Position
+
+| Function | Description |
+| --- | --- |
+| _fullSplit(condition, amount)_ | Creates a secondary split on an existing position up to the _amount_ of collateral held based on a _condition_ |
+| _redeem()_ | Merges the given _positions_ up to the _amount_ of collateral|
+| _balanceOf()_ | Returns the amount of tokens hold u |
 
