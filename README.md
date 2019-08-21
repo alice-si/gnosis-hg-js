@@ -21,3 +21,10 @@ We assume that you previously deployed the Gnosis contract and a collateral toke
     let condition = await hg.prepareCondition('Three options', oracle, 3);
     let positions = await condition.fullSplit(<Your collateral token>, 100);
     let groupedCondition = await condition.merge([position[0], position[1], 10);
+
+### Available functions
+
+| Function | Description |
+| --- | --- |
+| new HG(_contract_address_) | Creates a binding wrapper for a deployed prediction market system |
+| prepareCondition(_id_, _oracle_address_, _number_of_outcome_slots | Creates a new condition |
