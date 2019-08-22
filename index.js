@@ -65,11 +65,13 @@ function HG(contractAddress) {
 
   this.createCondition = function(oracle, questionId, outcomesSlotsCount) {
     return new Condition(oracle, questionId, outcomesSlotsCount);
-  }
+  };
 
   this.createPosition = function(condition, indexSet, collateralAddress, parent) {
     return new Position(condition, indexSet, collateralAddress, parent);
-  }
+  };
+
+
 
 
 
@@ -108,6 +110,23 @@ function HG(contractAddress) {
     this.questionId = questionId;
     this.outcomesSlotsCount = outcomesSlotsCount;
     this.id = hgUtils.getConditionId(oracle, questionId, outcomesSlotsCount);
+    var oracleProxy;
+
+    var findOracleProxy = async function(oracleAddress) {
+      for(let i=0;i<2; i++) {
+        try {
+          let signer = provider.getSigner(i);
+          let address = await signer.getAddress();
+
+          if (address == oracleAddress) {
+            oracleProxy = contract.connect(signer);
+            break
+          }
+        } catch (e) {
+          break;
+        }
+      }
+    };
 
     this.split = async function(collateralAddress, indexSet, amount, parent) {
       let parentCollectionId = parent ? parent.collectionId : ethers.constants.HashZero;
@@ -154,9 +173,12 @@ function HG(contractAddress) {
     };
 
     this.receiveResult = async function(result) {
+      await findOracleProxy(this.oracle);
       let resultsSet = hgUtils.formatResult(result);
-      return await contract.receiveResult(this.questionId, resultsSet);
+      return await oracleProxy.receiveResult(this.questionId, resultsSet);
     };
+
+
 
     //For debug purposes
     this.printAllPositions = async function(address, collateralAddress) {

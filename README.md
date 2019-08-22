@@ -35,10 +35,10 @@ We assume that you previously deployed the Gnosis contract and a collateral toke
 
 | Function | Description |
 | --- | --- |
-| _fullSplit(collateralAddress, amount)_ | Creates a first split on the given condition locking the _amount_ of collateral tokens _Before the first split the calling account needs to created an allowance for the desired amount of collateral (token.allow(prediction_markets_address, amount) |
+| _fullSplit(collateralAddress, amount)_ | Creates a first split on the given condition locking the _amount_ of collateral tokens The message sender needs to create an allowance on the collateral for the Prediction Market (token.allow(prediction_markets_address, amount) |
 | _merge(positions, amount)_ | Merges the given _positions_ up to the _amount_ of collateral|
 | _mergeAll(collateralAddress, amount)_ | Merges all of the _positions_ created on a given condition up to the _amount_ of collateral |
-| _receiveResult(result)_ | Records the array of results per every outcome slot |
+| _receiveResult(result)_ | Submits results from an oracle account as an array of values per every outcome slot |
 
 
 #### Position
@@ -47,5 +47,5 @@ We assume that you previously deployed the Gnosis contract and a collateral toke
 | --- | --- |
 | _fullSplit(condition, amount)_ | Creates a secondary split on an existing position up to the _amount_ of collateral held based on a _condition_ |
 | _redeem()_ | Merges the given _positions_ up to the _amount_ of collateral|
-| _balanceOf()_ | Returns the amount of tokens hold u |
+| _balanceOf()_ | Returns the amount of tokens held by the position |
 
