@@ -38,5 +38,4 @@ contract('Should fully split and merge', function ([owner, oracle]) {
     (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('0');
   });
 
-
 });
