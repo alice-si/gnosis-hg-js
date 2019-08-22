@@ -11,7 +11,7 @@ function HG(contractAddress) {
   var provider;
   var registry;
   var contract;
-  var showGasCosts = true;
+  var showGasCosts = false;
 
   if (typeof window === 'undefined') {
     provider = new ethers.providers.Web3Provider(web3.currentProvider);
@@ -177,8 +177,6 @@ function HG(contractAddress) {
       let resultsSet = hgUtils.formatResult(result);
       return await oracleProxy.receiveResult(this.questionId, resultsSet);
     };
-
-
 
     //For debug purposes
     this.printAllPositions = async function(address, collateralAddress) {
