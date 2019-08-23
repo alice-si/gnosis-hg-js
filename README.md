@@ -12,10 +12,10 @@ You will also need [truffle](https://github.com/trufflesuite/truffle) and [ganac
 
 ### Dappcon playground
 
-We prepared a set templates to demonstrate how the library works in practice and let you learn how to use it in an interactive fashion:
+We prepared a set templates to demonstrate how the library works in practice
+and let you learn how to use it in an interactive fashion:
 
-truffle test ./dappcon/*
-
+    truffle test ./dappcon/*
 
 ### Using Gnosis Mercury in 5 lines of code
 
