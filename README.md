@@ -5,6 +5,18 @@ If you are a smart-contract veteran, juggling bitwise operations and hex padding
 to use this library. For the rest of us mere mortals, this package should make your integration with the new release
 of the Gnosis Mercury contracts (HG) much more comfortable.
 
+### Getting started
+
+In order to play with the binding library it's good to have a node environment with the npm package manager.
+You will also need [truffle](https://github.com/trufflesuite/truffle) and [ganache-cli](https://github.com/trufflesuite/ganache-cli) to compile the contracts and run tests.
+
+### Dappcon playground
+
+We prepared a set templates to demonstrate how the library works in practice and let you learn how to use it in an interactive fashion:
+
+truffle test ./dappcon/*
+
+
 ### Using Gnosis Mercury in 5 lines of code
 
 We assume that you previously deployed the Gnosis contract and a collateral token:
