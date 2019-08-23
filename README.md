@@ -1,9 +1,9 @@
 # gnosis-hg-js
 Javascript bindings for the gnosis mercury contracts
 
-If you are a smart-contract veteran juggling bitwise operations and hex padding in memory there is absolutely no need
-to use this library. For the rest of the mere mortals, this package should make your integration with the new release
-of the Gnosis contracts much more comfortable.
+If you are a smart-contract veteran, juggling bitwise operations and hex padding in memory, there is absolutely no need
+to use this library. For the rest of us mere mortals, this package should make your integration with the new release
+of the Gnosis Mercury contracts (HG) much more comfortable.
 
 ### Using Gnosis Mercury in 5 lines of code
 
