@@ -4,24 +4,27 @@ const HG = require("../index.js");
 
 require("../test/test-setup");
 
-contract('Should fully split and merge', function ([user]) {
+contract('Should fully split and merge', function ([user, oracle]) {
 
   var pms;
   var collateral;
   var hg;
   var condition;
+  var positions;
 
-  step("Let's deploy all of the necessary contracts", async function () {
+  before("Let's deploy all of the necessary contracts", async function () {
     pms = await TestPMS.new();
     collateral = await CollateralToken.new();
   });
 
   step("1. We should bind the HG library to the contract address", async function () {
 
+    hg.should.be.not.null;
   });
 
-  step("2. Let's create the first position", async function () {
+  step("2. Let's create the first condition", async function () {
 
+    condition.should.be.not.null;
   });
 
 
@@ -30,12 +33,17 @@ contract('Should fully split and merge', function ([user]) {
     //Beware of minting the collateral tokens
     //and making an allowance first by approving a desired value of collateral to the pms contract
 
-
     //Remember to pass the collateral amount to the split function
 
+    positions.length.should.be.equal(2);
+
     //We can check the balance of collateral for the user and pms contract
+    (await collateral.balanceOf(user)).should.be.bignumber.equal('0');
+    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('100');
 
     //We can also check the balances of the newly created positions
+    (await positions[0].balanceOf(user)).should.be.bignumber.equal('100');
+    (await positions[1].balanceOf(user)).should.be.bignumber.equal('100');
   });
 
 
@@ -43,6 +51,8 @@ contract('Should fully split and merge', function ([user]) {
     //Remember of passing the desired amount of tokens to be merged
 
     //We can check the balance of collateral held by user and the pms contract
+    (await collateral.balanceOf(user)).should.be.bignumber.equal('100');
+    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('0');
   });
 
 });
