@@ -19,24 +19,26 @@ contract('Should fully split and merge', function ([owner, oracle]) {
   });
 
   step("1. Let's report the results", async function () {
-    await condition.receiveResult([1,0]);
+    //Pass the result as an array with the size equal to the outcome slots number
+    //putting 1 as a winner and 0 as a looser
+
   });
 
   step("2. Let's try to redeem the collateral on a loosing position", async function () {
-    await positions[1].redeem();
+    //You should use the redeem method
 
-    (await positions[1].balanceOf(owner)).should.be.bignumber.equal('0');
-    (await collateral.balanceOf(owner)).should.be.bignumber.equal('0');
-    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('100');
+    //We can check the balance of collateral held by the user and pms contract
+
+    //We can also check the position balance
+
   });
 
   step("3. Let's try to redeem the collateral on a winning position", async function () {
-    //Successful
-    await positions[0].redeem();
-    (await positions[0].balanceOf(owner)).should.be.bignumber.equal('0');
-    (await collateral.balanceOf(owner)).should.be.bignumber.equal('100');
-    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('0');
-  });
+    //You should use the redeem method
 
+    //We can check the balance of collateral held by the user and pms contract
+
+    //We can also check the position balance
+  });
 
 });

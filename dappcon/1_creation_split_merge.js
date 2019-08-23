@@ -4,7 +4,7 @@ const HG = require("../index.js");
 
 require("../test/test-setup");
 
-contract('Should fully split and merge', function ([owner, oracle]) {
+contract('Should fully split and merge', function ([user]) {
 
   var pms;
   var collateral;
@@ -17,37 +17,32 @@ contract('Should fully split and merge', function ([owner, oracle]) {
   });
 
   step("1. We should bind the HG library to the contract address", async function () {
-    hg = new HG(pms.address);
 
   });
 
   step("2. Let's create the first position", async function () {
-    condition = await hg.prepareCondition('First Condition', oracle, 2);
+
   });
 
-  //Beware of making an allowance first by approving a desired value of collateral to the pms contract
+
   //We can check the balance of collateral and position tokens afterwards
   step("3. Let's create the first split", async function () {
-    await collateral.mint(owner, 100);
-    await collateral.approve(pms.address, 100);
+    //Beware of minting the collateral tokens
+    //and making an allowance first by approving a desired value of collateral to the pms contract
 
-    let positions = await condition.fullSplit(collateral.address, 100);
 
-    (await collateral.balanceOf(owner)).should.be.bignumber.equal('0');
-    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('100');
+    //Remember to pass the collateral amount to the split function
 
-    positions.length.should.be.equal(2);
+    //We can check the balance of collateral for the user and pms contract
 
-    (await positions[0].balanceOf(owner)).should.be.bignumber.equal('100');
-    (await positions[1].balanceOf(owner)).should.be.bignumber.equal('100');
+    //We can also check the balances of the newly created positions
   });
 
-  //We can check the balance of collateral and position tokens afterwards
-  step("3. Let's fully merge the positions", async function () {
-    await condition.mergeAll(collateral.address, 100);
 
-    (await collateral.balanceOf(owner)).should.be.bignumber.equal('100');
-    (await collateral.balanceOf(pms.address)).should.be.bignumber.equal('0');
+  step("4. Let's fully merge the positions", async function () {
+    //Remember of passing the desired amount of tokens to be merged
+
+    //We can check the balance of collateral held by user and the pms contract
   });
 
 });
