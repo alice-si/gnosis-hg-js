@@ -4,7 +4,7 @@ const HG = require("../index.js");
 
 require("../test/test-setup");
 
-contract('Should fully split and merge', function ([owner, oracle]) {
+contract('Should fully split and merge', function ([user, oracle]) {
 
   var pms, hg, collateral, condition, positions;
 
@@ -13,7 +13,7 @@ contract('Should fully split and merge', function ([owner, oracle]) {
     collateral = await CollateralToken.new();
     hg = new HG(pms.address);
     condition = await hg.prepareCondition('First Condition', oracle, 2);
-    await collateral.mint(owner, 100);
+    await collateral.mint(user, 100);
     await collateral.approve(pms.address, 100);
     positions = await condition.fullSplit(collateral.address, 100);
   });
