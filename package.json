@@ -5,7 +5,7 @@
   "description": "Javascript bindings for the Gnosis mercury contracts",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "truffle test"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,6 @@
     "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {
-    "web3-utils": "^1.0.0-beta.47",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-bn": "^0.1.1",
@@ -40,8 +39,9 @@
     "mocha-steps": "^1.3.0",
     "openzeppelin-solidity": "^2.2.0",
     "openzeppelin-test-helpers": "^0.4.0",
-    "truffle": "^4.0.3",
+    "truffle": "^5.0.36",
     "truffle-contract": "^3.0.1",
-    "web3": "^1.0.0-beta.55"
+    "web3": "^1.0.0-beta.55",
+    "web3-utils": "^1.0.0-beta.47"
   }
 }
