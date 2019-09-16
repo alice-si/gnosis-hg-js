@@ -25,7 +25,7 @@
     "test": "test"
   },
   "dependencies": {
-    "@gnosis.pm/hg-contracts": "^0.2.3",
+    "@gnosis.pm/conditional-tokens-contracts": "^0.5.2",
     "ethers": "^4.0.33",
     "number-to-bn": "^1.7.0",
     "truffle-hdwallet-provider": "^1.0.15",
