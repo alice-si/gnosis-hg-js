@@ -3,7 +3,7 @@ const ethers = require('ethers');
 const numberToBN = require('number-to-bn');
 const hgUtils = require('./hg-utils.js');
 const hgRegistry = require('./hg-registry.js');
-const pmsContractJson = require('@gnosis.pm/hg-contracts/build/contracts/PredictionMarketSystem');
+const pmsContractJson = require('@gnosis.pm/conditional-tokens-contracts/build/contracts/ConditionalTokens');
 
 const ONE_BN = numberToBN(1);
 
@@ -174,8 +174,7 @@ function HG(contractAddress) {
 
     this.receiveResult = async function(result) {
       await findOracleProxy(this.oracle);
-      let resultsSet = hgUtils.formatResult(result);
-      return await oracleProxy.receiveResult(this.questionId, resultsSet);
+      return await oracleProxy.reportPayouts(this.questionId, result);
     };
 
     //For debug purposes

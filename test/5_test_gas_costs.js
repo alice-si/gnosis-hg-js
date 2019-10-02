@@ -91,8 +91,8 @@ contract('Split & merge 2 slots', function ([owner, oracle]) {
     await condition.merge(positions, 100);
   });
 
-  step("should split 256 positions", async function () {
-    condition = await hg.prepareCondition('128 slots condition', oracle, 256);
+  it.skip("should split 256 positions", async function () {
+    condition = await hg.prepareCondition('256 slots condition', oracle, 256);
     await collateral.mint(owner, 100);
     await collateral.approve(pms.address, 100);
 
